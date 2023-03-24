@@ -27,11 +27,14 @@ const RegistrationScreen = ({
 	}
 
 	return (
-		<View style={{ ...styles.form }}>
+		<View style={styles.form}>
 			<View style={styles.avatarWrapper}>
 				<View style={styles.avatar}>
 					<TouchableOpacity style={styles.iconThumb}>
-						<Image source={require('../assets/images/add.svg')} />
+						<Image
+							source={require('../assets/images/add.svg')}
+							style={{ width: 25, height: 25 }}
+						/>
 					</TouchableOpacity>
 				</View>
 			</View>

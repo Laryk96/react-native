@@ -29,7 +29,6 @@ const LoginScreen = ({
 			<View style={styles.fieldset}>
 				<View style={styles.field}>
 					<TextInput
-						onFocus={() => setIsShowKeyboard(true)}
 						value={email}
 						onChangeText={emailHandler}
 						placeholder='Адрес электронной почты'
@@ -39,7 +38,6 @@ const LoginScreen = ({
 				</View>
 				<View style={styles.field}>
 					<TextInput
-						onFocus={() => setIsShowKeyboard(true)}
 						value={password}
 						onChangeText={passwordHandler}
 						placeholder='Пароль'
@@ -126,7 +124,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		height: 51,
-		marginBottom: 32,
+		marginBottom: 16,
 		backgroundColor: '#FF6C00',
 		borderRadius: 100,
 		color: '#fff',

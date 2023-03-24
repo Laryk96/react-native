@@ -46,9 +46,9 @@ export default function App() {
 
 	const onSubmit = values => {
 		console.log(values)
+		Keyboard.dismiss()
 
 		setIsShowKeyboard(false)
-		Keyboard.dismiss()
 	}
 
 	if (!fontsLoaded) {
@@ -99,5 +99,8 @@ const styles = StyleSheet.create({
 		resizeMode: 'cover',
 		justifyContent: 'flex-end',
 	},
-	wrapper: { backgroundColor: '#fff' },
+	wrapper: {
+		backgroundColor: '#fff',
+		paddingBottom: 1,
+	},
 })

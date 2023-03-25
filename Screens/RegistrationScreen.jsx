@@ -5,8 +5,9 @@ import {
 	TextInput,
 	TouchableOpacity,
 	View,
-	Image,
 } from 'react-native'
+import Svg, { Path } from 'react-native-svg'
+import IconAdd from '../assets/images/add.svg'
 
 const RegistrationScreen = ({
 	submit,
@@ -31,10 +32,14 @@ const RegistrationScreen = ({
 			<View style={styles.avatarWrapper}>
 				<View style={styles.avatar}>
 					<TouchableOpacity style={styles.iconThumb}>
-						<Image
-							source={require('../assets/images/add.svg')}
-							style={{ width: 25, height: 25 }}
-						/>
+						<Svg width={25} height={25} viewBox='0 0 25 25'>
+							<Path
+								fill-rule='evenodd'
+								clip-rule='evenodd'
+								d='M13 6H12V12H6V13H12V19H13V13H19V12H13V6Z'
+								fill='#FF6C00'
+							/>
+						</Svg>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -113,7 +118,9 @@ const styles = StyleSheet.create({
 	},
 	iconThumb: {
 		position: 'absolute',
-
+		borderColor: 'red',
+		borderWidth: 1,
+		borderRadius: 50,
 		bottom: 0,
 		right: -10,
 		width: 25,

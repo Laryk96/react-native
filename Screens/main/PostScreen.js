@@ -7,9 +7,6 @@ export const PostScreen = () => {
 	const { email = '', login = '' } = useUser()
 	return (
 		<View style={styles.container}>
-			{/* <TouchableOpacity style={styles.exitBtn}>
-				<Ionicons name='exit-outline' size={24} color='black' />
-			</TouchableOpacity> */}
 			<View style={styles.avatarWrapper}>
 				<View style={styles.avatar}></View>
 				<View>
@@ -28,6 +25,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
+		backgroundColor: '#fff',
 	},
 	avatar: {
 		height: 60,

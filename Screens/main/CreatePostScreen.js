@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingHorizontal: 16,
 		paddingVertical: 32,
+		backgroundColor: '#fff',
 	},
 	form: { gap: 48 },
 	image: {

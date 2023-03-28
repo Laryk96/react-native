@@ -18,8 +18,6 @@ import { useUser } from '../../context'
 export const RegisterScreen = ({ navigation }) => {
 	const { email, login, setEmail, setLogin } = useUser()
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
-	// const [login, setLogin] = useState('')
-	// const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [securePass, setSecurePass] = useState(true)
 	const { width } = useWindowDimensions()

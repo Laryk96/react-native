@@ -12,21 +12,23 @@ import {
 	Platform,
 	useWindowDimensions,
 } from 'react-native'
+import { useUser } from '../../context'
 
 export const LoginScreen = ({ navigation }) => {
-	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
-	const [email, setEmail] = useState('')
+	const { email, setEmail, setLogin } = useUser()
+	// const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
 	const [securePass, setSecurePass] = useState(true)
 	const { width } = useWindowDimensions()
+
 	const emailHandler = text => setEmail(text)
 	const passwordHandler = text => setPassword(text)
 
-	const handleSubmit = values => {
-		console.log(values)
+	const handleSubmit = () => {
 		Keyboard.dismiss()
-
 		setIsShowKeyboard(false)
+		navigation.navigate('HomeScreen')
 	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)
@@ -57,7 +59,10 @@ export const LoginScreen = ({ navigation }) => {
 										onChangeText={emailHandler}
 										placeholder='Адрес электронной почты'
 										style={styles.input}
-										onSubmitEditing={text => submit(text)}
+										onSubmitEditing={text => {
+											console.log(text)
+											setIsShowKeyboard(false)
+										}}
 									/>
 								</View>
 								<View style={styles.field}>
@@ -67,7 +72,10 @@ export const LoginScreen = ({ navigation }) => {
 										placeholder='Пароль'
 										secureTextEntry={securePass}
 										style={styles.input}
-										onSubmitEditing={text => submit(text)}
+										onSubmitEditing={text => {
+											console.log(text)
+											setIsShowKeyboard(false)
+										}}
 									/>
 									<TouchableOpacity
 										style={styles.inputBtn}

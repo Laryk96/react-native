@@ -13,26 +13,26 @@ import {
 	useWindowDimensions,
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
+import { useUser } from '../../context'
 
 export const RegisterScreen = ({ navigation }) => {
+	const { email, login, setEmail, setLogin } = useUser()
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
-	const [login, setLogin] = useState('')
-	const [email, setEmail] = useState('')
+	// const [login, setLogin] = useState('')
+	// const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [securePass, setSecurePass] = useState(true)
 	const { width } = useWindowDimensions()
+
 	const loginHandler = text => setLogin(text)
 	const emailHandler = text => setEmail(text)
 	const passwordHandler = text => setPassword(text)
 
 	const handleSubmit = () => {
-		const data = {
-			login,
-			email,
-			password,
-		}
 		Keyboard.dismiss()
 		setIsShowKeyboard(false)
+
+		navigation.navigate('HomeScreen')
 	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)

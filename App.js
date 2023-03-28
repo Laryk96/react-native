@@ -1,12 +1,16 @@
 import React from 'react'
 
 import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
 
 import { useFonts } from 'expo-font'
-import { useRoute } from './router'
+import { LoginScreen, RegisterScreen } from './Screens/Auth'
+import { HomeScreen } from './Screens/main/HomeScreen'
+import { UserProvider } from './context'
+
+const AuthStack = createStackNavigator()
 
 export default function App() {
-	const routing = useRoute(null)
 	const [fontsLoaded] = useFonts({
 		'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
 		'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
@@ -16,5 +20,33 @@ export default function App() {
 		return null
 	}
 
-	return <NavigationContainer>{routing}</NavigationContainer>
+	return (
+		<UserProvider>
+			<NavigationContainer>
+				<AuthStack.Navigator>
+					<AuthStack.Screen
+						options={{
+							headerShown: false,
+						}}
+						name='Login'
+						component={LoginScreen}
+					/>
+					<AuthStack.Screen
+						options={{
+							headerShown: false,
+						}}
+						name='Registration'
+						component={RegisterScreen}
+					/>
+					<AuthStack.Screen
+						options={{
+							headerShown: false,
+						}}
+						name='HomeScreen'
+						component={HomeScreen}
+					/>
+				</AuthStack.Navigator>
+			</NavigationContainer>
+		</UserProvider>
+	)
 }

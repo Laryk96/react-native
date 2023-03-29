@@ -1,3 +1,9 @@
+import { useEffect, useState } from 'react'
+import { Camera, CameraType } from 'expo-camera'
+import * as MediaLibrary from 'expo-media-library'
+
+import { EvilIcons } from '@expo/vector-icons'
+
 import {
 	StyleSheet,
 	Text,
@@ -7,94 +13,128 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	TouchableWithoutFeedback,
+	Image,
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
-import { EvilIcons } from '@expo/vector-icons'
-import { useEffect, useState } from 'react'
 import { Keyboard } from 'react-native'
 
 export const CreatePostScreen = () => {
-	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
-	const [validation, setValidation] = useState(false)
-	const [image, setImage] = useState(true)
+	const [type, setType] = useState(CameraType.back)
+	const [permission, requestPermission] = Camera.useCameraPermissions()
+	const [camera, setCamera] = useState(null)
+	const [photo, setPhoto] = useState(null)
 	const [title, setTitle] = useState('')
 	const [location, setLocation] = useState('')
+	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
+
+	useEffect(() => {
+		requestPermission()
+	}, [])
+
+	const takePhoto = async () => {
+		const photo = await camera.takePictureAsync()
+		setPhoto(photo.uri)
+	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)
 		Keyboard.dismiss()
 	}
 
-	useEffect(() => {
-		if (location && image && title) {
-			return setValidation(true)
-		}
-		setValidation(false)
-	})
-
 	const handleTitle = text => setTitle(text)
 	const handleLocation = text => setLocation(text)
 
-	return (
-		<TouchableWithoutFeedback nPress={keyboardHide}>
-			<View style={styles.container}>
-				<KeyboardAvoidingView
-					style={{
-						marginBottom: isShowKeyboard ? 60 : 0,
-					}}
-					behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-				>
-					<View style={styles.form}>
-						<TouchableOpacity>
-							<View style={styles.image}>
-								<View style={styles.imageWrapper}>
-									<MaterialIcons
-										name='enhance-photo-translate'
-										size={24}
-										color='#BDBDBD'
-									/>
-								</View>
-							</View>
-							<Text style={styles.label}>Загрузите фото</Text>
-						</TouchableOpacity>
-						<View style={styles.field}>
-							<TextInput
-								value={title}
-								style={styles.input}
-								placeholder='Название...'
-								onChangeText={handleTitle}
-							/>
-						</View>
+	function toggleCameraType() {
+		setType(current =>
+			current === CameraType.back ? CameraType.front : CameraType.back
+		)
+	}
 
-						<View style={styles.field}>
-							<EvilIcons name='location' size={24} color='black' />
-							<TextInput
-								value={location}
-								style={styles.input}
-								placeholder='Местность...'
-								onChangeText={handleLocation}
-							/>
-						</View>
-						<TouchableOpacity
-							style={{
-								...styles.btnSubmit,
-								backgroundColor: validation ? '#FF6C00' : 'transparent',
-							}}
-						>
-							<Text
+	if (permission) {
+		return (
+			<TouchableWithoutFeedback nPress={keyboardHide}>
+				<View style={styles.container}>
+					<KeyboardAvoidingView
+						style={{
+							marginBottom: isShowKeyboard ? 60 : 0,
+						}}
+						behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+					>
+						<View style={styles.form}>
+							<View>
+								{permission && (
+									<Camera style={styles.camera} type={type} ref={setCamera}>
+										{photo && (
+											<View style={styles.photoContainer}>
+												<Image
+													source={{ url: photo }}
+													style={{ width: 100, height: 100 }}
+												/>
+											</View>
+										)}
+										<TouchableOpacity
+											style={styles.toggleButton}
+											onPress={takePhoto}
+										>
+											<MaterialIcons
+												name='enhance-photo-translate'
+												size={24}
+												color='#BDBDBD'
+											/>
+										</TouchableOpacity>
+									</Camera>
+								)}
+								{!permission && (
+									<View style={styles.camera}>
+										<Text>promising reject</Text>
+									</View>
+								)}
+								{!permission.granted && (
+									<View style={styles.camera}>
+										<Text>ops... promising not granted</Text>
+									</View>
+								)}
+								<Text style={styles.label}>Загрузите фото</Text>
+							</View>
+							<View style={styles.field}>
+								<TextInput
+									value={title}
+									style={styles.input}
+									placeholder='Название...'
+									onChangeText={handleTitle}
+								/>
+							</View>
+
+							<View style={styles.field}>
+								<EvilIcons name='location' size={24} color='black' />
+								<TextInput
+									value={location}
+									style={styles.input}
+									placeholder='Местность...'
+									onChangeText={handleLocation}
+								/>
+							</View>
+							<TouchableOpacity
 								style={{
-									...styles.text,
-									color: validation ? '#fff' : '#BDBDBD',
+									...styles.btnSubmit,
+									// backgroundColor: validation ? '#FF6C00' : '#F6F6F6',
 								}}
 							>
-								Опубликовать
-							</Text>
-						</TouchableOpacity>
-						<View style={styles.form}></View>
-					</View>
-				</KeyboardAvoidingView>
-			</View>
-		</TouchableWithoutFeedback>
-	)
+								<Text
+									style={{
+										...styles.text,
+										// color: validation ? '#fff' : '#BDBDBD',
+									}}
+								>
+									Опубликовать
+								</Text>
+							</TouchableOpacity>
+							<View style={styles.form}></View>
+						</View>
+					</KeyboardAvoidingView>
+				</View>
+			</TouchableWithoutFeedback>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
@@ -105,12 +145,19 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 	},
 	form: { gap: 48 },
-	image: {
+	camera: {
 		alignItems: 'center',
 		justifyContent: 'center',
 		height: 240,
 	},
-	imageWrapper: {
+	photoContainer: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		borderWidth: 1,
+		borderColor: '#fff',
+	},
+	toggleButton: {
 		justifyContent: 'center',
 		alignItems: 'center',
 		height: 60,

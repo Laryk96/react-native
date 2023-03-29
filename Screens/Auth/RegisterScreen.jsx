@@ -112,14 +112,14 @@ export const RegisterScreen = ({ navigation }) => {
 										style={styles.inputBtn}
 										onPress={() => setSecurePass(prevState => !prevState)}
 									>
-										<Text style={{ ...styles.label, color: ' #00008b' }}>
+										<Text style={{ ...styles.label, color: '#0000ff' }}>
 											{securePass ? 'Показать' : 'Скрыть'}
 										</Text>
 									</TouchableOpacity>
 								</View>
 							</View>
 							<TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-								<Text style={styles.label}>Зарегистрироваться</Text>
+								s<Text style={styles.label}>Зарегистрироваться</Text>
 							</TouchableOpacity>
 							<TouchableOpacity
 								style={styles.link}

@@ -81,7 +81,7 @@ export const LoginScreen = ({ navigation }) => {
 										style={styles.inputBtn}
 										onPress={() => setSecurePass(prevState => !prevState)}
 									>
-										<Text style={{ ...styles.label, color: ' #00008b' }}>
+										<Text style={{ ...styles.label, color: '#0000ff' }}>
 											{securePass ? 'Показать' : 'Скрыть'}
 										</Text>
 									</TouchableOpacity>

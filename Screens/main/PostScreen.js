@@ -1,19 +1,32 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, FlatList, Image } from 'react-native'
 
-import { useUser } from '../../context'
+export const PostScreen = ({ route: { params } }) => {
+	const [posts, setPosts] = useState([])
 
-export const PostScreen = () => {
-	const { email = '', login = '' } = useUser()
+	useEffect(() => {
+		if (params) {
+			setPosts(prevState => [...prevState, params])
+		}
+	}, [params])
+
 	return (
 		<View style={styles.container}>
-			<View style={styles.avatarWrapper}>
-				<View style={styles.avatar}></View>
-				<View>
-					<Text style={styles.name}>{login || 'Natali Romanova'}</Text>
-					<Text style={styles.email}>{email}</Text>
-				</View>
-			</View>
+			<FlatList
+				data={posts}
+				keyExtractor={(_, index) => index.toString()}
+				renderItem={({ item: { location, title, photo } }) => (
+					<View style={styles.post}>
+						<View style={styles.photoContainer}>
+							<Image source={{ uri: photo }} style={styles.photo} />
+						</View>
+						<View style={styles.textWrapper}>
+							<Text style={styles.text}>{title}</Text>
+							<Text style={styles.text}>{location}</Text>
+						</View>
+					</View>
+				)}
+			/>
 		</View>
 	)
 }
@@ -27,20 +40,21 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-start',
 		backgroundColor: '#fff',
 	},
-	avatar: {
-		height: 60,
-		width: 60,
-		backgroundColor: '#a9a9a9',
-		borderRadius: 16,
-	},
-
-	avatarWrapper: {
-		display: 'flex',
+	post: {
 		flexDirection: 'row',
-		justifyContent: 'center',
 		alignItems: 'center',
-		gap: 8,
+		gap: 10,
+		marginBottom: 10,
 	},
+	photoContainer: {
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: '#fff',
+		backgroundColor: 'yellow',
+	},
+	textWrapper: { gap: 6 },
+	text: { color: '#000' },
+	photo: { width: 60, height: 60, borderRadius: 10 },
 	name: {
 		fontWeight: 700,
 		fontSize: 13,

@@ -15,10 +15,11 @@ import {
 	TouchableWithoutFeedback,
 	Image,
 } from 'react-native'
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialIcons, Octicons } from '@expo/vector-icons'
 import { Keyboard } from 'react-native'
+import { useWindowDimensions } from 'react-native'
 
-export const CreatePostScreen = () => {
+export const CreatePostScreen = ({ navigation: { navigate } }) => {
 	const [type, setType] = useState(CameraType.back)
 	const [permission, requestPermission] = Camera.useCameraPermissions()
 	const [camera, setCamera] = useState(null)
@@ -26,15 +27,24 @@ export const CreatePostScreen = () => {
 	const [title, setTitle] = useState('')
 	const [location, setLocation] = useState('')
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
+	const { height } = useWindowDimensions()
 
 	useEffect(() => {
-		requestPermission()
+		;async () => {
+			await await MediaLibrary.requestPermissionsAsync()
+			requestPermission()
+		}
 	}, [])
 
 	const takePhoto = async () => {
-		const photo = await camera.takePictureAsync()
-		setPhoto(photo.uri)
+		const newPhoto = await camera.takePictureAsync()
+		setPhoto(newPhoto.uri)
 	}
+
+	const sendPost = () => {
+		navigate('Post', { photo, title, location })
+	}
+
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)
 		Keyboard.dismiss()
@@ -62,13 +72,14 @@ export const CreatePostScreen = () => {
 						<View style={styles.form}>
 							<View>
 								{permission && (
-									<Camera style={styles.camera} type={type} ref={setCamera}>
+									<Camera
+										style={{ ...styles.camera, height: height / 2.2 }}
+										type={type}
+										ref={setCamera}
+									>
 										{photo && (
 											<View style={styles.photoContainer}>
-												<Image
-													source={{ url: photo }}
-													style={{ width: 100, height: 100 }}
-												/>
+												<Image source={{ uri: photo }} style={styles.photo} />
 											</View>
 										)}
 										<TouchableOpacity
@@ -79,6 +90,19 @@ export const CreatePostScreen = () => {
 												name='enhance-photo-translate'
 												size={24}
 												color='#BDBDBD'
+											/>
+										</TouchableOpacity>
+										<TouchableOpacity
+											onPress={toggleCameraType}
+											style={{ position: 'absolute', bottom: 10, right: 15 }}
+										>
+											<Octicons
+												name='arrow-switch'
+												size={24}
+												color='black'
+												style={{
+													transform: [{ rotate: '90deg' }],
+												}}
 											/>
 										</TouchableOpacity>
 									</Camera>
@@ -118,6 +142,7 @@ export const CreatePostScreen = () => {
 									...styles.btnSubmit,
 									// backgroundColor: validation ? '#FF6C00' : '#F6F6F6',
 								}}
+								onPress={sendPost}
 							>
 								<Text
 									style={{
@@ -146,17 +171,19 @@ const styles = StyleSheet.create({
 	},
 	form: { gap: 48 },
 	camera: {
+		borderRadius: 2,
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: 240,
 	},
 	photoContainer: {
 		position: 'absolute',
-		top: 0,
-		left: 0,
+		bottom: 10,
+		left: 10,
+		borderRadius: 10,
 		borderWidth: 1,
 		borderColor: '#fff',
 	},
+	photo: { width: 60, height: 60, borderRadius: 10 },
 	toggleButton: {
 		justifyContent: 'center',
 		alignItems: 'center',

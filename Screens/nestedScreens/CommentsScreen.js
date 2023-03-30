@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 
-export const CommentScreen = () => {
+export const CommentsScreen = () => {
 	return (
 		<View style={styles.container}>
 			<Text>CreateScreen</Text>

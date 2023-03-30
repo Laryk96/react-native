@@ -12,21 +12,8 @@ export const HomeScreen = ({ navigation }) => {
 		<MainStack.Navigator>
 			<MainStack.Screen
 				options={{
-					headerTitleAlign: 'center',
-					headerShown: true,
-					title: 'Публикации',
-					headerTitleStyle: {
-						fontWeight: 'bold',
-					},
+					headerShown: false,
 					tabBarShowLabel: false,
-					headerRight: () => (
-						<TouchableOpacity
-							style={{ marginRight: 16 }}
-							onPress={() => navigation.navigate('Login')}
-						>
-							<Ionicons name='exit-outline' size={24} color='black' />
-						</TouchableOpacity>
-					),
 					tabBarIcon: ({ focused }) => (
 						<AntDesign
 							name='appstore-o'

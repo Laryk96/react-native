@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import * as Location from 'expo-location'
+import {
+	getCurrentPositionAsync,
+	useForegroundPermissions,
+} from 'expo-location'
 import { Camera, CameraType } from 'expo-camera'
 import * as MediaLibrary from 'expo-media-library'
 
@@ -22,6 +25,8 @@ import { useWindowDimensions } from 'react-native'
 
 export const CreatePostScreen = ({ navigation: { navigate } }) => {
 	const [permission, requestPermission] = Camera.useCameraPermissions()
+	const [status, requestPermissionLocation] = useForegroundPermissions()
+
 	const [type, setType] = useState(CameraType.back)
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
 	const { height } = useWindowDimensions()
@@ -35,18 +40,20 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 			await MediaLibrary.requestPermissionsAsync()
 		}
 		requestPermission()
+		requestPermissionLocation()
 	}, [])
 
 	const takePhoto = async () => {
 		const newPhoto = await camera.takePictureAsync()
-		const location = await Location.getCurrentPositionAsync()
+		const {
+			coords: { latitude, longitude },
+		} = await getCurrentPositionAsync()
 		setPhoto(newPhoto.uri)
-		// setLocation(location)
-		console.log(location)
+		setLocation({ latitude, longitude })
 	}
 
 	const sendPost = () => {
-		navigate('Post', { photo, title, location })
+		navigate('DefaultScreen', { photo, title, location })
 	}
 
 	const keyboardHide = () => {

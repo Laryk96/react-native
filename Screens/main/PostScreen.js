@@ -1,51 +1,33 @@
-import { useEffect, useState } from 'react'
-import { FontAwesome } from '@expo/vector-icons'
-import {
-	StyleSheet,
-	Text,
-	View,
-	FlatList,
-	Image,
-	useWindowDimensions,
-} from 'react-native'
+import { createStackNavigator } from '@react-navigation/stack'
+import { TouchableOpacity } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { CommentsScreen } from '../nestedScreens/CommentsScreen'
+import { DefaultScreenPost } from '../nestedScreens/DefaultScreenPosts'
+import { MapScreen } from '../nestedScreens/MapScreen'
+import { Ionicons, AntDesign } from '@expo/vector-icons'
+const NestedScreen = createStackNavigator()
 
 export const PostScreen = ({ route: { params } }) => {
-	const [posts, setPosts] = useState([])
-	const { width } = useWindowDimensions()
-	useEffect(() => {
-		if (params) {
-			setPosts(prevState => [...prevState, params])
-		}
-	}, [params])
-
 	return (
-		<View style={styles.container}>
-			<FlatList
-				data={posts}
-				keyExtractor={(_, index) => index.toString()}
-				renderItem={({ item: { location, title, photo } }) => (
-					<View style={styles.post}>
-						<View style={styles.photoContainer}>
-							<Image
-								source={{ uri: photo }}
-								style={{
-									...styles.photo,
-									width: width - 34,
-									height: width / 1.45,
-								}}
-							/>
-						</View>
-						<Text style={{ ...styles.text, marginBottom: 4, marginLeft: 6 }}>
-							{title}
-						</Text>
-						<View style={styles.bottomBox}>
-							<FontAwesome name='comment-o' size={24} color='black' />
-							<Text style={styles.text}>{location}</Text>
-						</View>
-					</View>
-				)}
+		<NestedScreen.Navigator>
+			<NestedScreen.Screen
+				name='DefaultScreen'
+				component={DefaultScreenPost}
+				options={{
+					headerTitleAlign: 'center',
+					headerRight: () => (
+						<TouchableOpacity
+							style={{ marginRight: 16 }}
+							onPress={() => navigation.navigate('Login')}
+						>
+							<Ionicons name='exit-outline' size={24} color='black' />
+						</TouchableOpacity>
+					),
+				}}
 			/>
-		</View>
+			<NestedScreen.Screen name='Comments' component={CommentsScreen} />
+			<NestedScreen.Screen name='Map' component={MapScreen} />
+		</NestedScreen.Navigator>
 	)
 }
 
@@ -57,46 +39,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
 		backgroundColor: '#fff',
-	},
-	post: {
-		gap: 10,
-		marginBottom: 20,
-		marginHorizontal: 1,
-	},
-	photoContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderRadius: 6,
-		borderWidth: 1,
-		borderColor: '#fff',
-	},
-	bottomBox: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginHorizontal: 6,
-	},
-	text: {
-		fontSize: 16,
-		lineHeight: 19,
-		fontWeight: 500,
-		color: '#000',
-	},
-	photo: { borderRadius: 6 },
-	name: {
-		fontWeight: 700,
-		fontSize: 13,
-		lineHeight: 15,
-		color: '#212121',
-	},
-	email: {
-		fontSize: 11,
-		lineHeight: 13,
-		color: 'rgba(33, 33, 33, 0.8)',
-	},
-
-	exitBtn: {
-		position: 'absolute',
-		top: -10,
-		right: 19,
 	},
 })

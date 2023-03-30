@@ -1,13 +1,13 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import { TouchableOpacity } from 'react-native'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { CommentsScreen } from '../nestedScreens/CommentsScreen'
 import { DefaultScreenPost } from '../nestedScreens/DefaultScreenPosts'
 import { MapScreen } from '../nestedScreens/MapScreen'
-import { Ionicons, AntDesign } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 const NestedScreen = createStackNavigator()
 
-export const PostScreen = ({ route: { params } }) => {
+export const PostScreen = ({ navigation }) => {
 	return (
 		<NestedScreen.Navigator>
 			<NestedScreen.Screen
@@ -25,8 +25,8 @@ export const PostScreen = ({ route: { params } }) => {
 					),
 				}}
 			/>
-			<NestedScreen.Screen name='Comments' component={CommentsScreen} />
 			<NestedScreen.Screen name='Map' component={MapScreen} />
+			<NestedScreen.Screen name='Comments' component={CommentsScreen} />
 		</NestedScreen.Navigator>
 	)
 }

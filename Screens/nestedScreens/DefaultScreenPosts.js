@@ -20,7 +20,7 @@ export const DefaultScreenPost = ({ navigation, route: { params } }) => {
 	}, [params])
 
 	const goToMap = location => {
-		navigation.navigate('Map')
+		navigation.navigate('Map', location)
 	}
 
 	return (
@@ -44,8 +44,10 @@ export const DefaultScreenPost = ({ navigation, route: { params } }) => {
 							{title}
 						</Text>
 						<View style={styles.bottomBox}>
-							<FontAwesome name='comment-o' size={24} color='black' />
-							<TouchableOpacity onPress={() => navigation.navigate('Map')}>
+							<TouchableOpacity onPress={() => navigation.navigate('Comments')}>
+								<FontAwesome name='comment-o' size={24} color='black' />
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => goToMap(location)}>
 								<Text style={styles.text}>location</Text>
 							</TouchableOpacity>
 						</View>

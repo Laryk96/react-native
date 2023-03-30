@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 
-export const MapScreen = ({ route: { latitude, longitude } }) => {
+export const MapScreen = ({ route: { params } }) => {
+	const { latitude, longitude } = params
 	return (
 		<View style={styles.container}>
 			<MapView
@@ -13,7 +14,7 @@ export const MapScreen = ({ route: { latitude, longitude } }) => {
 					longitudeDelta: 0.0421,
 				}}
 			>
-				<Marker coordinate={{ latitude, longitude }} title='travel photo' />
+				<Marker coordinate={{ latitude, longitude }} />
 			</MapView>
 		</View>
 	)
@@ -22,7 +23,5 @@ export const MapScreen = ({ route: { latitude, longitude } }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 })

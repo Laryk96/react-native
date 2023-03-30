@@ -119,7 +119,7 @@ export const RegisterScreen = ({ navigation }) => {
 								</View>
 							</View>
 							<TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-								s<Text style={styles.label}>Зарегистрироваться</Text>
+								<Text style={styles.label}>Зарегистрироваться</Text>
 							</TouchableOpacity>
 							<TouchableOpacity
 								style={styles.link}

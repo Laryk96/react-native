@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, FlatList, Image } from 'react-native'
+import { FontAwesome } from '@expo/vector-icons'
+import {
+	StyleSheet,
+	Text,
+	View,
+	FlatList,
+	Image,
+	useWindowDimensions,
+} from 'react-native'
 
 export const PostScreen = ({ route: { params } }) => {
 	const [posts, setPosts] = useState([])
-
+	const { width } = useWindowDimensions()
 	useEffect(() => {
 		if (params) {
 			setPosts(prevState => [...prevState, params])
@@ -18,10 +26,20 @@ export const PostScreen = ({ route: { params } }) => {
 				renderItem={({ item: { location, title, photo } }) => (
 					<View style={styles.post}>
 						<View style={styles.photoContainer}>
-							<Image source={{ uri: photo }} style={styles.photo} />
+							<Image
+								source={{ uri: photo }}
+								style={{
+									...styles.photo,
+									width: width - 34,
+									height: width / 1.45,
+								}}
+							/>
 						</View>
-						<View style={styles.textWrapper}>
-							<Text style={styles.text}>{title}</Text>
+						<Text style={{ ...styles.text, marginBottom: 4, marginLeft: 6 }}>
+							{title}
+						</Text>
+						<View style={styles.bottomBox}>
+							<FontAwesome name='comment-o' size={24} color='black' />
 							<Text style={styles.text}>{location}</Text>
 						</View>
 					</View>
@@ -41,20 +59,29 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 	},
 	post: {
-		flexDirection: 'row',
-		alignItems: 'center',
 		gap: 10,
-		marginBottom: 10,
+		marginBottom: 20,
+		marginHorizontal: 1,
 	},
 	photoContainer: {
-		borderRadius: 10,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 6,
 		borderWidth: 1,
 		borderColor: '#fff',
-		backgroundColor: 'yellow',
 	},
-	textWrapper: { gap: 6 },
-	text: { color: '#000' },
-	photo: { width: 60, height: 60, borderRadius: 10 },
+	bottomBox: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginHorizontal: 6,
+	},
+	text: {
+		fontSize: 16,
+		lineHeight: 19,
+		fontWeight: 500,
+		color: '#000',
+	},
+	photo: { borderRadius: 6 },
 	name: {
 		fontWeight: 700,
 		fontSize: 13,

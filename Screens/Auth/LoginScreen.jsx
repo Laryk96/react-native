@@ -60,7 +60,6 @@ export const LoginScreen = ({ navigation }) => {
 										placeholder='Адрес электронной почты'
 										style={styles.input}
 										onSubmitEditing={text => {
-											console.log(text)
 											setIsShowKeyboard(false)
 										}}
 									/>
@@ -73,7 +72,6 @@ export const LoginScreen = ({ navigation }) => {
 										secureTextEntry={securePass}
 										style={styles.input}
 										onSubmitEditing={text => {
-											console.log(text)
 											setIsShowKeyboard(false)
 										}}
 									/>

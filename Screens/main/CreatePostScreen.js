@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import * as Location from 'expo-location'
 import { Camera, CameraType } from 'expo-camera'
 import * as MediaLibrary from 'expo-media-library'
 
@@ -20,25 +21,28 @@ import { Keyboard } from 'react-native'
 import { useWindowDimensions } from 'react-native'
 
 export const CreatePostScreen = ({ navigation: { navigate } }) => {
-	const [type, setType] = useState(CameraType.back)
 	const [permission, requestPermission] = Camera.useCameraPermissions()
-	const [camera, setCamera] = useState(null)
-	const [photo, setPhoto] = useState(null)
-	const [title, setTitle] = useState('')
-	const [location, setLocation] = useState('')
+	const [type, setType] = useState(CameraType.back)
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
 	const { height } = useWindowDimensions()
+	const [camera, setCamera] = useState(null)
+	const [location, setLocation] = useState(null)
+	const [title, setTitle] = useState('')
+	const [photo, setPhoto] = useState(null)
 
 	useEffect(() => {
 		;async () => {
-			await await MediaLibrary.requestPermissionsAsync()
-			requestPermission()
+			await MediaLibrary.requestPermissionsAsync()
 		}
+		requestPermission()
 	}, [])
 
 	const takePhoto = async () => {
 		const newPhoto = await camera.takePictureAsync()
+		const location = await Location.getCurrentPositionAsync()
 		setPhoto(newPhoto.uri)
+		// setLocation(location)
+		console.log(location)
 	}
 
 	const sendPost = () => {
@@ -59,19 +63,19 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 		)
 	}
 
-	if (permission) {
-		return (
-			<TouchableWithoutFeedback nPress={keyboardHide}>
-				<View style={styles.container}>
-					<KeyboardAvoidingView
-						style={{
-							marginBottom: isShowKeyboard ? 60 : 0,
-						}}
-						behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-					>
-						<View style={styles.form}>
-							<View>
-								{permission && (
+	return (
+		<TouchableWithoutFeedback nPress={keyboardHide}>
+			<View style={styles.container}>
+				<KeyboardAvoidingView
+					style={{
+						marginBottom: isShowKeyboard ? 60 : 0,
+					}}
+					behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+				>
+					<View style={styles.form}>
+						<View>
+							{permission && (
+								<>
 									<Camera
 										style={{ ...styles.camera, height: height / 2.2 }}
 										type={type}
@@ -106,60 +110,55 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 											/>
 										</TouchableOpacity>
 									</Camera>
-								)}
-								{!permission && (
-									<View style={styles.camera}>
-										<Text>promising reject</Text>
-									</View>
-								)}
-								{!permission.granted && (
-									<View style={styles.camera}>
-										<Text>ops... promising not granted</Text>
-									</View>
-								)}
-								<Text style={styles.label}>Загрузите фото</Text>
-							</View>
-							<View style={styles.field}>
-								<TextInput
-									value={title}
-									style={styles.input}
-									placeholder='Название...'
-									onChangeText={handleTitle}
-								/>
-							</View>
-
-							<View style={styles.field}>
-								<EvilIcons name='location' size={24} color='black' />
-								<TextInput
-									value={location}
-									style={styles.input}
-									placeholder='Местность...'
-									onChangeText={handleLocation}
-								/>
-							</View>
-							<TouchableOpacity
-								style={{
-									...styles.btnSubmit,
-									// backgroundColor: validation ? '#FF6C00' : '#F6F6F6',
-								}}
-								onPress={sendPost}
-							>
-								<Text
-									style={{
-										...styles.text,
-										// color: validation ? '#fff' : '#BDBDBD',
-									}}
-								>
-									Опубликовать
-								</Text>
-							</TouchableOpacity>
-							<View style={styles.form}></View>
+									<Text style={styles.label}>Загрузите фото</Text>
+								</>
+							)}
+							{!permission && (
+								<View style={styles.camera}>
+									<Text>promising reject</Text>
+								</View>
+							)}
 						</View>
-					</KeyboardAvoidingView>
-				</View>
-			</TouchableWithoutFeedback>
-		)
-	}
+						<View style={styles.field}>
+							<TextInput
+								value={title}
+								style={styles.input}
+								placeholder='Название...'
+								onChangeText={handleTitle}
+							/>
+						</View>
+
+						<View style={styles.field}>
+							<EvilIcons name='location' size={24} color='black' />
+							<TextInput
+								value={location}
+								style={styles.input}
+								placeholder='Местность...'
+								onChangeText={handleLocation}
+							/>
+						</View>
+						<TouchableOpacity
+							style={{
+								...styles.btnSubmit,
+								// backgroundColor: validation ? '#FF6C00' : '#F6F6F6',
+							}}
+							onPress={sendPost}
+						>
+							<Text
+								style={{
+									...styles.text,
+									// color: validation ? '#fff' : '#BDBDBD',
+								}}
+							>
+								Опубликовать
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.form}></View>
+					</View>
+				</KeyboardAvoidingView>
+			</View>
+		</TouchableWithoutFeedback>
+	)
 }
 
 const styles = StyleSheet.create({

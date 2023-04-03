@@ -13,6 +13,8 @@ import {
 	useWindowDimensions,
 } from 'react-native'
 import { useUser } from '../../context'
+import { selectState } from '../../redux/auth/selectors'
+import { useSelector } from 'react-redux'
 
 export const LoginScreen = ({ navigation }) => {
 	const { email, setEmail, setLogin } = useUser()

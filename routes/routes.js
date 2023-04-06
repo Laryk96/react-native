@@ -7,9 +7,8 @@ import { HomeScreen } from '.././Screens/main/HomeScreen'
 
 const AuthStack = createStackNavigator()
 
-export const useRoute = user => {
-	const [isLogin, setLogin] = useState(user)
-	if (!isLogin) {
+export const useRoute = authorization => {
+	if (!authorization) {
 		return (
 			<AuthStack.Navigator>
 				<AuthStack.Screen

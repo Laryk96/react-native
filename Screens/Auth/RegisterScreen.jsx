@@ -15,7 +15,7 @@ import {
 import Svg, { Path } from 'react-native-svg'
 
 import { useDispatch } from 'react-redux'
-import { register } from '../../redux/auth/authOperatiom'
+import { registerUser } from '../../redux/auth/authOperatiom'
 
 export const RegisterScreen = ({ navigation }) => {
 	const [login, setLogin] = useState('')
@@ -37,7 +37,7 @@ export const RegisterScreen = ({ navigation }) => {
 		setIsShowKeyboard(false)
 
 		dispatch(
-			register({
+			registerUser({
 				email,
 				password,
 				login,

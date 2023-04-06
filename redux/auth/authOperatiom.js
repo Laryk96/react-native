@@ -2,31 +2,36 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import '../../firebase'
 import {
 	getAuth,
+	updateProfile,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	onAuthStateChanged,
 } from 'firebase/auth'
-import { updateUserProfile } from './authSlice'
-
-export const register = createAsyncThunk(
+// import firebaseApp from '../../firebase'
+export const registerUser = createAsyncThunk(
 	'auth/register',
 	async ({ email, password, login }, { rejectWithValue }) => {
 		try {
 			const auth = await getAuth()
-			const { user } = await createUserWithEmailAndPassword(
-				auth,
-				email,
-				password
-			)
+			await createUserWithEmailAndPassword(auth, email, password)
+			await updateProfile(auth.currentUser, {
+				displayName: login,
+			})
 
-			return { userId: user.uid, nickname: login }
+			const { uid, displayName } = await auth.currentUser
+
+			return {
+				userId: uid,
+				nickname: displayName,
+			}
 		} catch (error) {
-			console.log(error.message)
+			console.log(error)
 			return rejectWithValue(error.message)
 		}
 	}
 )
 
-export const login = createAsyncThunk(
+export const loginUser = createAsyncThunk(
 	'auth/login',
 	async ({ email, password }, { rejectWithValue }) => {
 		try {
@@ -36,25 +41,41 @@ export const login = createAsyncThunk(
 			return { userId: user.uid, nickname: login }
 		} catch (error) {
 			console.log(error)
-			console.log(error.code)
-			console.log(error.message)
 			return rejectWithValue(error.message)
 		}
 	}
 )
-// export const login = createAsyncThunk(
-// 	'auth/login',
-// 	async ({ email, password }, { rejectWithValue }) => {
-// 		try {
-// 			const auth = await getAuth()
-// 			const user = await signInWithEmailAndPassword(auth, email, password)
-// 			console.log('user', user)
-// 			return user.user
-// 		} catch (error) {
-// 			console.log(error)
-// 			console.log(error.code)
-// 			console.log(error.message)
-// 			return rejectWithValue(error.message)
-// 		}
-// 	}
-// )
+
+export const refreshUser = createAsyncThunk(
+	'auth/refresh',
+	async (_, { rejectWithValue }) => {
+		try {
+			const auth = await getAuth()
+			auth.onAuthStateChanged(user => {
+				if (!user) {
+					return rejectWithValue('User not found')
+				}
+
+				return { nickname: user.displayName, userId: user.uid }
+			})
+		} catch (error) {
+			console.log(error)
+			return rejectWithValue(error.message)
+		}
+	}
+)
+
+export const logOutUser = createAsyncThunk(
+	'auth/refresh',
+	async ({ email, password }, { rejectWithValue }) => {
+		try {
+			const auth = await getAuth()
+			auth.onAuthStateChanged(user => setAuthorization(user))
+
+			return { userId: user.uid, nickname: login }
+		} catch (error) {
+			console.log(error)
+			return rejectWithValue(error.message)
+		}
+	}
+)

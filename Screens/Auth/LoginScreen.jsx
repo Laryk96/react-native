@@ -13,7 +13,7 @@ import {
 	useWindowDimensions,
 } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { login } from '../../redux/auth/authOperatiom'
+import { loginUser } from '../../redux/auth/authOperatiom'
 
 export const LoginScreen = ({ navigation }) => {
 	const [email, setEmail] = useState('')
@@ -30,7 +30,7 @@ export const LoginScreen = ({ navigation }) => {
 	const handleSubmit = () => {
 		Keyboard.dismiss()
 		setIsShowKeyboard(false)
-		dispatch(login({ email, password }))
+		dispatch(loginUser({ email, password }))
 	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)

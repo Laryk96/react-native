@@ -13,13 +13,19 @@ import {
 	useWindowDimensions,
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
-import { useUser } from '../../context'
+
+import { useDispatch } from 'react-redux'
+import { register } from '../../redux/auth/authOperatiom'
 
 export const RegisterScreen = ({ navigation }) => {
-	const { email, login, setEmail, setLogin } = useUser()
+	const [login, setLogin] = useState('')
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
 	const [password, setPassword] = useState('')
+	const [email, setEmail] = useState('')
 	const [securePass, setSecurePass] = useState(true)
+
+	const dispatch = useDispatch()
+
 	const { width } = useWindowDimensions()
 
 	const loginHandler = text => setLogin(text)
@@ -30,7 +36,13 @@ export const RegisterScreen = ({ navigation }) => {
 		Keyboard.dismiss()
 		setIsShowKeyboard(false)
 
-		navigation.navigate('HomeScreen')
+		dispatch(
+			register({
+				email,
+				password,
+				login,
+			})
+		)
 	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)
@@ -77,7 +89,6 @@ export const RegisterScreen = ({ navigation }) => {
 										placeholder='Логин'
 										style={styles.input}
 										onSubmitEditing={text => {
-											console.log(text)
 											setIsShowKeyboard(false)
 										}}
 									/>
@@ -90,7 +101,6 @@ export const RegisterScreen = ({ navigation }) => {
 										placeholder='Адрес электронной почты'
 										style={styles.input}
 										onSubmitEditing={text => {
-											console.log(text)
 											setIsShowKeyboard(false)
 										}}
 									/>
@@ -104,7 +114,6 @@ export const RegisterScreen = ({ navigation }) => {
 										secureTextEntry={securePass}
 										style={styles.input}
 										onSubmitEditing={text => {
-											console.log(text)
 											setIsShowKeyboard(false)
 										}}
 									/>

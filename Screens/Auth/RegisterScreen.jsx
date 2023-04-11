@@ -43,6 +43,10 @@ export const RegisterScreen = ({ navigation }) => {
 				login,
 			})
 		)
+
+		setEmail('')
+		setPassword('')
+		setLogin('')
 	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)

@@ -5,9 +5,16 @@ import { CommentsScreen } from '../nestedScreens/CommentsScreen'
 import { DefaultScreenPost } from '../nestedScreens/DefaultScreenPosts'
 import { MapScreen } from '../nestedScreens/MapScreen'
 import { Ionicons } from '@expo/vector-icons'
+import { useDispatch } from 'react-redux'
+import { logOutUser } from '../../redux/auth/authOperatiom'
 const NestedScreen = createStackNavigator()
 
 export const PostScreen = ({ navigation }) => {
+	const dispatch = useDispatch()
+
+	const singOut = () => {
+		dispatch(logOutUser())
+	}
 	return (
 		<NestedScreen.Navigator>
 			<NestedScreen.Screen
@@ -16,10 +23,7 @@ export const PostScreen = ({ navigation }) => {
 				options={{
 					headerTitleAlign: 'center',
 					headerRight: () => (
-						<TouchableOpacity
-							style={{ marginRight: 16 }}
-							onPress={() => navigation.navigate('Login')}
-						>
+						<TouchableOpacity style={{ marginRight: 16 }} onPress={singOut}>
 							<Ionicons name='exit-outline' size={24} color='black' />
 						</TouchableOpacity>
 					),

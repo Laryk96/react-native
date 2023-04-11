@@ -38,9 +38,7 @@
 		"react-redux": "^8.0.5"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.20.0",
-		"babel-preset-expo": "^9.3.2",
-		"remote-redux-devtools": "^0.5.16"
+		"@babel/core": "^7.20.0"
 	},
 	"private": true
 }

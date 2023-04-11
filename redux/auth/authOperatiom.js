@@ -6,7 +6,9 @@ import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	onAuthStateChanged,
+	signOut,
 } from 'firebase/auth'
+import { setLoginStatus } from './authSlice'
 // import firebaseApp from '../../firebase'
 export const registerUser = createAsyncThunk(
 	'auth/register',
@@ -38,7 +40,22 @@ export const loginUser = createAsyncThunk(
 			const auth = await getAuth()
 			const { user } = await signInWithEmailAndPassword(auth, email, password)
 
-			return { userId: user.uid, nickname: login }
+			return { userId: user.uid, nickname: user.displayName }
+		} catch (error) {
+			console.log(error)
+			return rejectWithValue(error.message)
+		}
+	}
+)
+
+export const logOutUser = createAsyncThunk(
+	'auth/logout',
+	async (_, { rejectWithValue }) => {
+		try {
+			const auth = await getAuth()
+			await signOut(auth)
+
+			return
 		} catch (error) {
 			console.log(error)
 			return rejectWithValue(error.message)
@@ -48,15 +65,21 @@ export const loginUser = createAsyncThunk(
 
 export const refreshUser = createAsyncThunk(
 	'auth/refresh',
-	async (_, { rejectWithValue }) => {
+	async (_, { rejectWithValue, dispatch }) => {
 		try {
 			const auth = await getAuth()
-			auth.onAuthStateChanged(user => {
-				if (!user) {
-					return rejectWithValue('User not found')
-				}
+			await onAuthStateChanged(auth, user => {
+				console.log('user', user)
 
-				return { nickname: user.displayName, userId: user.uid }
+				if (user) {
+					return dispatch(
+						setLoginStatus({
+							nickname: user.displayName,
+							userId: user.uid,
+							isAuthorization: true,
+						})
+					)
+				}
 			})
 		} catch (error) {
 			console.log(error)
@@ -65,17 +88,4 @@ export const refreshUser = createAsyncThunk(
 	}
 )
 
-export const logOutUser = createAsyncThunk(
-	'auth/refresh',
-	async ({ email, password }, { rejectWithValue }) => {
-		try {
-			const auth = await getAuth()
-			auth.onAuthStateChanged(user => setAuthorization(user))
-
-			return { userId: user.uid, nickname: login }
-		} catch (error) {
-			console.log(error)
-			return rejectWithValue(error.message)
-		}
-	}
-)
+// if (!user) return rejectWithValue('user not found')

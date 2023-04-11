@@ -31,6 +31,8 @@ export const LoginScreen = ({ navigation }) => {
 		Keyboard.dismiss()
 		setIsShowKeyboard(false)
 		dispatch(loginUser({ email, password }))
+		setEmail('')
+		setPassword('')
 	}
 	const keyboardHide = () => {
 		setIsShowKeyboard(false)

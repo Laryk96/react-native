@@ -11,7 +11,7 @@ import { useUser } from '../../context'
 
 export const ProfileScreen = () => {
 	const { height } = useWindowDimensions()
-	const { login = 'Natali Romanova' } = useUser()
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground
@@ -28,7 +28,7 @@ export const ProfileScreen = () => {
 						</View>
 					</View>
 
-					<Text>{login}</Text>
+					<Text></Text>
 				</KeyboardAvoidingView>
 			</ImageBackground>
 		</View>

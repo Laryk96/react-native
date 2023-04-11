@@ -17,7 +17,7 @@ const Main = () => {
 	useEffect(() => {
 		dispatch(refreshUser())
 	}, [])
-	console.log(state)
+	// console.log(state)
 	return <NavigationContainer>{routing}</NavigationContainer>
 }
 

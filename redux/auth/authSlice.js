@@ -22,11 +22,11 @@ export const authSlice = createSlice({
 		isError: false,
 	},
 	reducers: {
-		setLoginStatus(state, { payload }) {
-			console.log('===payload==', payload)
+		updateUserProfile(state, { payload }) {
+			console.log('updateUserProfile', payload)
 			state.userId = payload.userId
 			state.nickname = payload.nickname
-			state.isAuthorization = payload.isAuthorization
+			state.isAuthorization = true
 		},
 	},
 	extraReducers: builder => {
@@ -35,11 +35,13 @@ export const authSlice = createSlice({
 				state.userId = payload.userId
 				state.nickname = payload.nickname
 				state.isAuthorization = true
+				state.isError = false
 			})
 			.addCase(loginUser.fulfilled, (state, { payload }) => {
 				state.userId = payload.userId
 				state.nickname = payload.nickname
 				state.isAuthorization = true
+				state.isError = false
 			})
 			// .addCase(refreshUser.fulfilled, (state, { payload }) => {})
 			.addCase(logOutUser.fulfilled, state => {
@@ -48,17 +50,24 @@ export const authSlice = createSlice({
 				state.isAuthorization = false
 				state.isError = false
 			})
+			// .addCase(refreshUser.fulfilled, (state, { payload }) => {
+			// 	console.log('refrash', payload)
+			// 	state.userId = payload.userId
+			// 	state.nickname = payload.nickname
+			// 	state.isAuthorization = true
+			// 	state.isError = false
+			// })
 			.addCase(registerUser.pending, handlePending)
 			.addCase(loginUser.pending, handlePending)
 			.addCase(logOutUser.pending, handlePending)
-			.addCase(refreshUser.pending, handlePending)
+			// .addCase(refreshUser.pending, handlePending)
 			.addCase(registerUser.rejected, handleRejected)
 			.addCase(loginUser.rejected, handleRejected)
 			.addCase(logOutUser.rejected, handleRejected)
-			.addCase(refreshUser.rejected, handleRejected)
+		// .addCase(refreshUser.rejected, handleRejected)
 	},
 })
 
-export const { setLoginStatus } = authSlice.actions
+export const { updateUserProfile } = authSlice.actions
 
 //

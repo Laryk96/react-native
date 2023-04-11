@@ -8,8 +8,7 @@ import {
 	onAuthStateChanged,
 	signOut,
 } from 'firebase/auth'
-import { setLoginStatus } from './authSlice'
-// import firebaseApp from '../../firebase'
+
 export const registerUser = createAsyncThunk(
 	'auth/register',
 	async ({ email, password, login }, { rejectWithValue }) => {
@@ -63,29 +62,31 @@ export const logOutUser = createAsyncThunk(
 	}
 )
 
-export const refreshUser = createAsyncThunk(
-	'auth/refresh',
-	async (_, { rejectWithValue, dispatch }) => {
-		try {
-			const auth = await getAuth()
-			await onAuthStateChanged(auth, user => {
-				console.log('user', user)
+// export const refreshUser = createAsyncThunk(
+// 	'auth/refresh',
+// 	async (_, { rejectWithValue }) => {
+// 		try {
+// 			const auth = await getAuth()
+// 			await onAuthStateChanged(auth, user => {
+// 				console.log('refrashOperation', user)
 
-				if (user) {
-					return dispatch(
-						setLoginStatus({
-							nickname: user.displayName,
-							userId: user.uid,
-							isAuthorization: true,
-						})
-					)
-				}
-			})
-		} catch (error) {
-			console.log(error)
-			return rejectWithValue(error.message)
-		}
-	}
-)
+// 				if (user) {
+// 					return { userId: user.uid, nickname: user.displayName }
+// 				}
+// 				return rejectWithValue('User not found')
+// 			})
+// 		} catch (error) {
+// 			console.log(error)
+// 			return rejectWithValue(error.message)
+// 		}
+// 	}
+// )
 
 // if (!user) return rejectWithValue('user not found')
+// return dispatch(
+// 	updateUserProfile({
+// 		nickname: user.displayName,
+// 		userId: user.uid,
+// 		isAuthorization: true,
+// 	})
+// )

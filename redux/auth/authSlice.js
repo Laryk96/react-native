@@ -23,7 +23,6 @@ export const authSlice = createSlice({
 	},
 	reducers: {
 		updateUserProfile(state, { payload }) {
-			console.log('updateUserProfile', payload)
 			state.userId = payload.userId
 			state.nickname = payload.nickname
 			state.isAuthorization = true
@@ -60,11 +59,11 @@ export const authSlice = createSlice({
 			.addCase(registerUser.pending, handlePending)
 			.addCase(loginUser.pending, handlePending)
 			.addCase(logOutUser.pending, handlePending)
-			// .addCase(refreshUser.pending, handlePending)
+			.addCase(refreshUser.pending, handlePending)
 			.addCase(registerUser.rejected, handleRejected)
 			.addCase(loginUser.rejected, handleRejected)
 			.addCase(logOutUser.rejected, handleRejected)
-		// .addCase(refreshUser.rejected, handleRejected)
+			.addCase(refreshUser.rejected, handleRejected)
 	},
 })
 

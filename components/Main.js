@@ -4,44 +4,39 @@ import { useDispatch, useSelector } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
 
 import { useRoute } from '../routes/routes'
-// import { refreshUser } from '../redux/auth/authOperatiom'
 import { selectAuth } from '../redux/auth/selectors'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import app from '../firebase'
-
-import { updateUserProfile } from '../redux/auth/authSlice'
-
-const auth = getAuth()
+import { refreshUser } from '../redux/auth/authOperatiom'
 
 const Main = () => {
-	const [authState, setAuthState] = useState(null)
 	const { isAuthorization } = useSelector(selectAuth)
-	const state = useSelector(state => state)
 	const dispatch = useDispatch()
+	const routing = useRoute(isAuthorization)
+	// const [authState, setAuthState] = useState(null)
+	// const state = useSelector(state => state)
+	// const { user } = useAuthentication()
+	// console.log('user', user)
+	// useEffect(() => {
+	// 	const auth = getAuth()
 
-	const routing = useRoute(authState)
+	// 	const unsubscribe = onAuthStateChanged(auth, user => {
+	// 		if (user) {
+	// 			setAuthState(true)
+	// 			dispatch(
+	// 				updateUserProfile({ userId: user.userId, nickname: user.displayName })
+	// 			)
+	// 		} else {
+	// 			return setAuthState(false)
+	// 		}
+	// 	})
+	// return () => {
+	// 	unsubscribe()
+	// }
+	// })
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, user => {
-			console.log('user', user)
-			if (user) {
-				setAuthState(true)
-				dispatch(
-					updateUserProfile({ userId: user.userId, nickname: user.displayName })
-				)
-			} else {
-				return setAuthState(false)
-			}
-		})
-		return () => {
-			unsubscribe()
-		}
-	})
-	console.log(state.auth)
-	// useEffect(() => {
-	// 	// dispatch(refreshUser())
-	// }, [])
-	// console.log(state)
+		dispatch(refreshUser())
+	}, [])
+
 	return <NavigationContainer>{routing}</NavigationContainer>
 }
 

@@ -1,9 +1,87 @@
-import { StyleSheet, Text, View } from 'react-native'
+import {
+	doc,
+	getFirestore,
+	setDoc,
+	addDoc,
+	collection,
+	onSnapshot,
+} from 'firebase/firestore'
 
-export const CommentsScreen = () => {
+import { useEffect, useState } from 'react'
+import {
+	StyleSheet,
+	Text,
+	View,
+	TextInput,
+	TouchableOpacity,
+	FlatList,
+} from 'react-native'
+import {} from 'react-native-gesture-handler'
+import { useSelector } from 'react-redux'
+import { selectAuth } from '../../redux/auth/selectors'
+import app from '../../firebase'
+
+export const CommentsScreen = ({ route }) => {
+	const { nickname } = useSelector(selectAuth)
+	const [comment, setComment] = useState('')
+	const { postId } = route.params
+	const [allComments, setAllComments] = useState([])
+
+	useEffect(() => {
+		getAllPosts()
+		console.log(allComments)
+	}, [])
+	const creactPost = async () => {
+		try {
+			const db = getFirestore(app)
+
+			await addDoc(collection(db, `posts/${postId}/comments`), {
+				nickname,
+				comment,
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	const getAllPosts = async () => {
+		try {
+			const db = await getFirestore(app)
+			const unsub = await onSnapshot(collection(db, 'posts'), snapshot => {
+				setAllComments(
+					snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+				)
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	const handleComment = text => setComment(text)
 	return (
 		<View style={styles.container}>
-			<Text>CommentsScreen</Text>
+			<FlatList
+				data={allComments}
+				renderItem={({ item }) => (
+					<View style={styles.commentContainer}>
+						<Text>{item.nickname}</Text>
+						<Text>{item.comment}</Text>
+					</View>
+				)}
+				keyExtractor={({ item, index }) => index}
+			/>
+			<View style={styles.form}>
+				<View style={styles.field}>
+					<TextInput
+						value={comment}
+						style={styles.input}
+						placeholder='Залишити коментар'
+						onChangeText={handleComment}
+					/>
+				</View>
+				<TouchableOpacity style={styles.btnSubmit} onPress={creactPost}>
+					<Text style={styles.text}>Надіслати</Text>
+				</TouchableOpacity>
+			</View>
 		</View>
 	)
 }
@@ -11,7 +89,42 @@ export const CommentsScreen = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: 'flex-end',
+
+		paddingVertical: 20,
+	},
+	commentContainer: {
+		marginHorizontal: 10,
+
+		padding: 8,
+	},
+	commentField: {
+		borderWidth: 1,
+		borderColor: '#BDBDBD',
+		borderRadius: 6,
+	},
+
+	form: {},
+	text: { textAlign: 'center', fontSize: 20 },
+	label: {
+		fontSize: 16,
+		lineHeight: 19,
+		color: '#BDBDBD',
+	},
+	field: {
+		marginHorizontal: 10,
+		marginBottom: 20,
+		height: 30,
+		gap: 4,
+		backgroundColor: '#a9a9a9',
+		borderRadius: 6,
+	},
+	input: { flex: 1 },
+	btnSubmit: {
+		borderRadius: 10,
+		marginHorizontal: 30,
+		paddingVertical: 8,
+		borderWidth: 1,
+		borderColor: `#ff7f50`,
 	},
 })

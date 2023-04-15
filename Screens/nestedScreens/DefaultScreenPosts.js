@@ -1,3 +1,10 @@
+import {
+	collection,
+	doc,
+	getFirestore,
+	onSnapshot,
+	query,
+} from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { FontAwesome } from '@expo/vector-icons'
 import {
@@ -9,16 +16,31 @@ import {
 	TouchableOpacity,
 	useWindowDimensions,
 } from 'react-native'
+import app from '../../firebase'
+import { selectAuth } from '../../redux/auth/selectors'
+import { useSelector } from 'react-redux'
 
-export const DefaultScreenPost = ({ navigation, route: { params } }) => {
-	const [posts, setPosts] = useState([])
+export const DefaultScreenPost = ({ navigation }) => {
+	const [posts, setPosts] = useState(null)
 	const { width } = useWindowDimensions()
+	const { nickname, userId } = useSelector(selectAuth)
 	useEffect(() => {
-		if (params) {
-			setPosts(prevState => [...prevState, params])
-		}
-	}, [params])
+		getAllPost()
+	}, [])
 
+	const getAllPost = async () => {
+		try {
+			const db = await getFirestore(app)
+			const unsub = await onSnapshot(collection(db, 'posts'), snapshot => {
+				setPosts(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	const goToComments = id => {
+		navigation.navigate('Comments', { postId: id })
+	}
 	const goToMap = location => {
 		navigation.navigate('Map', location)
 	}
@@ -28,7 +50,7 @@ export const DefaultScreenPost = ({ navigation, route: { params } }) => {
 			<FlatList
 				data={posts}
 				keyExtractor={(_, index) => index.toString()}
-				renderItem={({ item: { location, title, photo } }) => (
+				renderItem={({ item: { location, comment, photo, id } }) => (
 					<View style={styles.post}>
 						<View style={styles.photoContainer}>
 							<Image
@@ -41,10 +63,10 @@ export const DefaultScreenPost = ({ navigation, route: { params } }) => {
 							/>
 						</View>
 						<Text style={{ ...styles.text, marginBottom: 4, marginLeft: 6 }}>
-							{title}
+							{comment}
 						</Text>
 						<View style={styles.bottomBox}>
-							<TouchableOpacity onPress={() => navigation.navigate('Comments')}>
+							<TouchableOpacity onPress={() => goToComments(id)}>
 								<FontAwesome name='comment-o' size={24} color='black' />
 							</TouchableOpacity>
 							<TouchableOpacity onPress={() => goToMap(location)}>

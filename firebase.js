@@ -1,6 +1,8 @@
 import { initializeApp } from 'firebase/app'
-
-// import { getAnalytics } from 'firebase/analytics'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/auth'
+import 'firebase/compat//storage'
+import 'firebase/compat/firestore'
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyCkULtauPBlatiOHoT1qMs8KLQzIWS3It8',
@@ -11,8 +13,6 @@ const firebaseConfig = {
 	appId: '1:1022422293819:web:98e9c3363890923a15eb1e',
 	measurementId: 'G-K3LNGFVZHL',
 }
-
-// Initialize Firebase
 
 const app = initializeApp(firebaseConfig)
 

@@ -9,6 +9,9 @@ import {
 	signOut,
 } from 'firebase/auth'
 
+import app from '../../firebase'
+import { updateUserProfile } from './authSlice'
+
 export const registerUser = createAsyncThunk(
 	'auth/register',
 	async ({ email, password, login }, { rejectWithValue }) => {
@@ -62,25 +65,27 @@ export const logOutUser = createAsyncThunk(
 	}
 )
 
-// export const refreshUser = createAsyncThunk(
-// 	'auth/refresh',
-// 	async (_, { rejectWithValue }) => {
-// 		try {
-// 			const auth = await getAuth()
-// 			await onAuthStateChanged(auth, user => {
-// 				console.log('refrashOperation', user)
+export const refreshUser = createAsyncThunk(
+	'auth/refresh',
+	async (_, { rejectWithValue, dispatch }) => {
+		try {
+			const auth = await getAuth()
+			await onAuthStateChanged(auth, user => {
+				console.log('refrashOperation', user)
 
-// 				if (user) {
-// 					return { userId: user.uid, nickname: user.displayName }
-// 				}
-// 				return rejectWithValue('User not found')
-// 			})
-// 		} catch (error) {
-// 			console.log(error)
-// 			return rejectWithValue(error.message)
-// 		}
-// 	}
-// )
+				if (user) {
+					return dispatch(
+						updateUserProfile({ userId: user.uid, nickname: user.displayName })
+					)
+				}
+				return rejectWithValue('User not found')
+			})
+		} catch (error) {
+			console.log(error)
+			return rejectWithValue(error.message)
+		}
+	}
+)
 
 // if (!user) return rejectWithValue('user not found')
 // return dispatch(

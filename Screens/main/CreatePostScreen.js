@@ -1,8 +1,11 @@
+import { getFirestore, collection, addDoc } from 'firebase/firestore'
+
 import { useEffect, useState } from 'react'
 import {
 	getCurrentPositionAsync,
 	useForegroundPermissions,
 } from 'expo-location'
+import { getStorage, ref, getDownloadURL, uploadBytes } from 'firebase/storage'
 import { Camera, CameraType } from 'expo-camera'
 import * as MediaLibrary from 'expo-media-library'
 
@@ -22,17 +25,21 @@ import {
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
 import { Keyboard } from 'react-native'
 import { useWindowDimensions } from 'react-native'
+import app from '../../firebase'
+import { useSelector } from 'react-redux'
+import { selectAuth } from '../../redux/auth/selectors'
 
 export const CreatePostScreen = ({ navigation: { navigate } }) => {
 	const [permission, requestPermission] = Camera.useCameraPermissions()
 	const [status, requestPermissionLocation] = useForegroundPermissions()
 
+	const { nickname, userId } = useSelector(selectAuth)
 	const [type, setType] = useState(CameraType.back)
 	const [isShowKeyboard, setIsShowKeyboard] = useState(false)
 	const { height } = useWindowDimensions()
 	const [camera, setCamera] = useState(null)
 	const [location, setLocation] = useState(null)
-	const [title, setTitle] = useState('')
+	const [comment, setComment] = useState('')
 	const [photo, setPhoto] = useState(null)
 
 	useEffect(() => {
@@ -48,12 +55,56 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 		const {
 			coords: { latitude, longitude },
 		} = await getCurrentPositionAsync()
+
 		setPhoto(newPhoto.uri)
 		setLocation({ latitude, longitude })
+		console.log(x)
+	}
+
+	const uploadPhotoToServer = async () => {
+		try {
+			// task: upload
+			const response = await fetch(photo)
+			const file = await response.blob()
+			const imagePath = `postImage/${photo.substring(
+				photo.lastIndexOf('/') + 1
+			)}`
+			const storage = getStorage()
+			const storageRef = ref(storage, imagePath)
+
+			await uploadBytes(storageRef, file)
+
+			// task: download
+			const updatedStorage = await getStorage()
+			const processedPhoto = await getDownloadURL(
+				ref(updatedStorage, imagePath)
+			)
+
+			return processedPhoto
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	const uploadPostToServer = async () => {
+		try {
+			const photo = await uploadPhotoToServer()
+			const db = await getFirestore(app)
+			await addDoc(collection(db, 'posts'), {
+				userId,
+				nickname,
+				photo,
+				comment,
+				location,
+			})
+		} catch (e) {
+			console.error('Error adding document: ', e)
+		}
 	}
 
 	const sendPost = () => {
-		navigate('DefaultScreen', { photo, title, location })
+		uploadPostToServer()
+		navigate('DefaultScreen')
 	}
 
 	const keyboardHide = () => {
@@ -61,7 +112,7 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 		Keyboard.dismiss()
 	}
 
-	const handleTitle = text => setTitle(text)
+	const handlMessage = text => setComment(text)
 	const handleLocation = text => setLocation(text)
 
 	function toggleCameraType() {
@@ -70,102 +121,112 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 		)
 	}
 
-	return (
-		<TouchableWithoutFeedback nPress={keyboardHide}>
-			<View style={styles.container}>
-				<KeyboardAvoidingView
-					style={{
-						marginBottom: isShowKeyboard ? 60 : 0,
-					}}
-					behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-				>
-					<View style={styles.form}>
-						<View>
-							{permission && (
-								<>
-									<Camera
-										style={{ ...styles.camera, height: height / 2.2 }}
-										type={type}
-										ref={setCamera}
+	if (permission?.status === 'granted') {
+		return (
+			<TouchableWithoutFeedback nPress={keyboardHide}>
+				<View style={styles.container}>
+					<KeyboardAvoidingView
+						style={{
+							marginBottom: isShowKeyboard ? 60 : 0,
+						}}
+						behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+					>
+						<View style={styles.form}>
+							<View>
+								<Camera
+									style={{ ...styles.camera, height: height / 2.2 }}
+									type={type}
+									ref={setCamera}
+								>
+									{photo && (
+										<View style={styles.photoContainer}>
+											<Image source={{ uri: photo }} style={styles.photo} />
+										</View>
+									)}
+									<TouchableOpacity
+										style={styles.toggleButton}
+										onPress={takePhoto}
 									>
-										{photo && (
-											<View style={styles.photoContainer}>
-												<Image source={{ uri: photo }} style={styles.photo} />
-											</View>
-										)}
-										<TouchableOpacity
-											style={styles.toggleButton}
-											onPress={takePhoto}
-										>
-											<MaterialIcons
-												name='enhance-photo-translate'
-												size={24}
-												color='#BDBDBD'
-											/>
-										</TouchableOpacity>
-										<TouchableOpacity
-											onPress={toggleCameraType}
-											style={{ position: 'absolute', bottom: 10, right: 15 }}
-										>
-											<Octicons
-												name='arrow-switch'
-												size={24}
-												color='black'
-												style={{
-													transform: [{ rotate: '90deg' }],
-												}}
-											/>
-										</TouchableOpacity>
-									</Camera>
-									<Text style={styles.label}>Загрузите фото</Text>
-								</>
-							)}
-							{!permission && (
-								<View style={styles.camera}>
-									<Text>promising reject</Text>
-								</View>
-							)}
-						</View>
-						<View style={styles.field}>
-							<TextInput
-								value={title}
-								style={styles.input}
-								placeholder='Название...'
-								onChangeText={handleTitle}
-							/>
-						</View>
+										<MaterialIcons
+											name='enhance-photo-translate'
+											size={24}
+											color='#BDBDBD'
+										/>
+									</TouchableOpacity>
+									<TouchableOpacity
+										onPress={toggleCameraType}
+										style={{ position: 'absolute', bottom: 10, right: 15 }}
+									>
+										<Octicons
+											name='arrow-switch'
+											size={24}
+											color='black'
+											style={{
+												transform: [{ rotate: '90deg' }],
+											}}
+										/>
+									</TouchableOpacity>
+								</Camera>
+								<Text style={styles.label}>Загрузите фото</Text>
+							</View>
+							<View style={styles.field}>
+								<TextInput
+									value={comment}
+									style={styles.input}
+									placeholder='Название...'
+									onChangeText={handlMessage}
+								/>
+							</View>
 
-						<View style={styles.field}>
-							<EvilIcons name='location' size={24} color='black' />
-							<TextInput
-								value={location}
-								style={styles.input}
-								placeholder='Местность...'
-								onChangeText={handleLocation}
-							/>
-						</View>
-						<TouchableOpacity
-							style={{
-								...styles.btnSubmit,
-								// backgroundColor: validation ? '#FF6C00' : '#F6F6F6',
-							}}
-							onPress={sendPost}
-						>
-							<Text
+							<View style={styles.field}>
+								<EvilIcons name='location' size={24} color='black' />
+								<TextInput
+									value={location}
+									style={styles.input}
+									placeholder='Местность...'
+									onChangeText={handleLocation}
+								/>
+							</View>
+							<TouchableOpacity
 								style={{
-									...styles.text,
-									// color: validation ? '#fff' : '#BDBDBD',
+									...styles.btnSubmit,
+									// backgroundColor: validation ? '#FF6C00' : '#F6F6F6',
 								}}
+								onPress={sendPost}
 							>
-								Опубликовать
-							</Text>
-						</TouchableOpacity>
-						<View style={styles.form}></View>
+								<Text
+									style={{
+										...styles.text,
+										// color: validation ? '#fff' : '#BDBDBD',
+									}}
+								>
+									Опубликовать
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</KeyboardAvoidingView>
+				</View>
+			</TouchableWithoutFeedback>
+		)
+	} else {
+		return (
+			<TouchableWithoutFeedback nPress={keyboardHide}>
+				<View style={styles.container}>
+					<View
+						style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+					>
+						<Text
+							style={{
+								color: '#000',
+							}}
+						>
+							Allow the camera
+						</Text>
 					</View>
-				</KeyboardAvoidingView>
-			</View>
-		</TouchableWithoutFeedback>
-	)
+				</View>
+			</TouchableWithoutFeedback>
+		)
+	}
 }
 
 const styles = StyleSheet.create({

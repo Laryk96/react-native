@@ -1,4 +1,13 @@
 import {
+	collection,
+	getDocs,
+	getFirestore,
+	onSnapshot,
+	query,
+	where,
+} from 'firebase/firestore'
+
+import {
 	ImageBackground,
 	KeyboardAvoidingView,
 	Platform,
@@ -7,11 +16,36 @@ import {
 	useWindowDimensions,
 	View,
 } from 'react-native'
-import { useUser } from '../../context'
+
+import { useEffect, useState } from 'react'
+
+import app from '../../firebase'
+import { useSelector } from 'react-redux'
+import { selectAuth } from '../../redux/auth/selectors'
 
 export const ProfileScreen = () => {
 	const { height } = useWindowDimensions()
+	const { userId } = useSelector(selectAuth)
+	const [] = useState()
+	useEffect(() => {
+		getUserPost()
+	}, [])
 
+	const getUserPost = async () => {
+		try {
+			const db = await getFirestore(app)
+			const citiesRef = await collection(db, 'post')
+			console.log(userId)
+			const q = await query(citiesRef, where('userId', '==', userId))
+
+			await onSnapshot(q, snapshot => {
+				console.log(snapshot)
+				console.log(snapshot.docs.map(doc => ({ ...doc.data() })))
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}
 	return (
 		<View style={styles.container}>
 			<ImageBackground

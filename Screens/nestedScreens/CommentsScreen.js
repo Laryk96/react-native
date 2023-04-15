@@ -29,7 +29,7 @@ export const CommentsScreen = ({ route }) => {
 
 	useEffect(() => {
 		getAllPosts()
-		console.log(allComments)
+		console.log('allComments', allComments)
 	}, [])
 	const creactPost = async () => {
 		try {
@@ -47,7 +47,7 @@ export const CommentsScreen = ({ route }) => {
 	const getAllPosts = async () => {
 		try {
 			const db = await getFirestore(app)
-			const unsub = await onSnapshot(collection(db, 'posts'), snapshot => {
+			await onSnapshot(collection(db, `posts/${postId}/comments`), snapshot => {
 				setAllComments(
 					snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
 				)
@@ -67,7 +67,7 @@ export const CommentsScreen = ({ route }) => {
 						<Text>{item.comment}</Text>
 					</View>
 				)}
-				keyExtractor={({ item, index }) => index}
+				keyExtractor={({ id }, index) => index}
 			/>
 			<View style={styles.form}>
 				<View style={styles.field}>
@@ -95,16 +95,14 @@ const styles = StyleSheet.create({
 	},
 	commentContainer: {
 		marginHorizontal: 10,
-
+		marginBottom: 10,
 		padding: 8,
-	},
-	commentField: {
 		borderWidth: 1,
 		borderColor: '#BDBDBD',
 		borderRadius: 6,
 	},
 
-	form: {},
+	form: { marginTop: 30 },
 	text: { textAlign: 'center', fontSize: 20 },
 	label: {
 		fontSize: 16,
@@ -116,8 +114,9 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		height: 30,
 		gap: 4,
-		backgroundColor: '#a9a9a9',
-		borderRadius: 6,
+		borderColor: 'transparent',
+		borderBottomColor: '#a9a9a9',
+		borderWidth: 2,
 	},
 	input: { flex: 1 },
 	btnSubmit: {

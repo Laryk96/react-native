@@ -86,12 +86,3 @@ export const refreshUser = createAsyncThunk(
 		}
 	}
 )
-
-// if (!user) return rejectWithValue('user not found')
-// return dispatch(
-// 	updateUserProfile({
-// 		nickname: user.displayName,
-// 		userId: user.uid,
-// 		isAuthorization: true,
-// 	})
-// )

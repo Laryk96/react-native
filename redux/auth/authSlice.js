@@ -42,7 +42,6 @@ export const authSlice = createSlice({
 				state.isAuthorization = true
 				state.isError = false
 			})
-			// .addCase(refreshUser.fulfilled, (state, { payload }) => {})
 			.addCase(logOutUser.fulfilled, state => {
 				state.userId = null
 				state.nickname = null

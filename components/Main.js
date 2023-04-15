@@ -11,27 +11,6 @@ const Main = () => {
 	const { isAuthorization } = useSelector(selectAuth)
 	const dispatch = useDispatch()
 	const routing = useRoute(isAuthorization)
-	// const [authState, setAuthState] = useState(null)
-	// const state = useSelector(state => state)
-	// const { user } = useAuthentication()
-	// console.log('user', user)
-	// useEffect(() => {
-	// 	const auth = getAuth()
-
-	// 	const unsubscribe = onAuthStateChanged(auth, user => {
-	// 		if (user) {
-	// 			setAuthState(true)
-	// 			dispatch(
-	// 				updateUserProfile({ userId: user.userId, nickname: user.displayName })
-	// 			)
-	// 		} else {
-	// 			return setAuthState(false)
-	// 		}
-	// 	})
-	// return () => {
-	// 	unsubscribe()
-	// }
-	// })
 
 	useEffect(() => {
 		dispatch(refreshUser())

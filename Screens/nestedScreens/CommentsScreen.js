@@ -67,7 +67,7 @@ export const CommentsScreen = ({ route }) => {
 						<Text>{item.comment}</Text>
 					</View>
 				)}
-				keyExtractor={({ id }, index) => index}
+				keyExtractor={({ id }) => id}
 			/>
 			<View style={styles.form}>
 				<View style={styles.field}>

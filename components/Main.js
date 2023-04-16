@@ -11,10 +11,11 @@ const Main = () => {
 	const { isAuthorization } = useSelector(selectAuth)
 	const dispatch = useDispatch()
 	const routing = useRoute(isAuthorization)
-
-	useEffect(() => {
-		dispatch(refreshUser())
-	}, [])
+	const x = useSelector(selectAuth)
+	// useEffect(() => {
+	// 	dispatch(refreshUser())
+	// 	console.log(x)
+	// }, [])
 
 	return <NavigationContainer>{routing}</NavigationContainer>
 }

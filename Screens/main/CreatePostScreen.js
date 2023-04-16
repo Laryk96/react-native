@@ -41,6 +41,7 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 	const [location, setLocation] = useState(null)
 	const [comment, setComment] = useState('')
 	const [photo, setPhoto] = useState(null)
+	const [locality, setLocality] = useState('')
 
 	useEffect(() => {
 		;async () => {
@@ -96,6 +97,7 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 				photo,
 				comment,
 				location,
+				locality: locality === '' ? 'location' : locality,
 			})
 		} catch (e) {
 			console.error('Error adding document: ', e)
@@ -113,7 +115,7 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 	}
 
 	const handlMessage = text => setComment(text)
-	const handleLocation = text => setLocation(text)
+	const handleLocality = text => setLocality(text)
 
 	function toggleCameraType() {
 		setType(current =>
@@ -181,10 +183,10 @@ export const CreatePostScreen = ({ navigation: { navigate } }) => {
 							<View style={styles.field}>
 								<EvilIcons name='location' size={24} color='black' />
 								<TextInput
-									value={location}
+									value={locality}
 									style={styles.input}
 									placeholder='Местность...'
-									onChangeText={handleLocation}
+									onChangeText={handleLocality}
 								/>
 							</View>
 							<TouchableOpacity

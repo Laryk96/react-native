@@ -48,21 +48,14 @@ export const authSlice = createSlice({
 				state.isAuthorization = false
 				state.isError = false
 			})
-			// .addCase(refreshUser.fulfilled, (state, { payload }) => {
-			// 	console.log('refrash', payload)
-			// 	state.userId = payload.userId
-			// 	state.nickname = payload.nickname
-			// 	state.isAuthorization = true
-			// 	state.isError = false
-			// })
-			.addCase(registerUser.pending, handlePending)
 			.addCase(loginUser.pending, handlePending)
 			.addCase(logOutUser.pending, handlePending)
-			.addCase(refreshUser.pending, handlePending)
 			.addCase(registerUser.rejected, handleRejected)
 			.addCase(loginUser.rejected, handleRejected)
 			.addCase(logOutUser.rejected, handleRejected)
-			.addCase(refreshUser.rejected, handleRejected)
+		// .addCase(refreshUser.rejected, handleRejected)
+		// .addCase(refreshUser.pending, handlePending)
+		// .addCase(registerUser.pending, handlePending)
 	},
 })
 

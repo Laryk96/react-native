@@ -27,13 +27,13 @@ import app from '../../firebase'
 
 import { selectAuth } from '../../redux/auth/selectors'
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({ navigation }) => {
 	const { width } = useWindowDimensions()
 	const { height } = useWindowDimensions()
 	const { userId } = useSelector(selectAuth)
 	const [userPosts, setUserPosts] = useState([])
 	const { nickname } = useSelector(selectAuth)
-	const [] = useState()
+
 	useEffect(() => {
 		getUserPost()
 	}, [])
@@ -53,6 +53,14 @@ export const ProfileScreen = () => {
 			console.log(error)
 		}
 	}
+
+	const goToComments = id => {
+		navigation.navigate('Comments', { postId: id })
+	}
+	const goToMap = location => {
+		navigation.navigate('Map', location)
+	}
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground
@@ -75,7 +83,9 @@ export const ProfileScreen = () => {
 						<FlatList
 							data={userPosts}
 							keyExtractor={({ id }) => id}
-							renderItem={({ item: { location, comment, photo, id } }) => (
+							renderItem={({
+								item: { locality, location, comment, photo, id },
+							}) => (
 								<View style={styles.post}>
 									<View style={styles.photoContainer}>
 										<Image
@@ -97,7 +107,7 @@ export const ProfileScreen = () => {
 											<FontAwesome name='comment-o' size={24} color='black' />
 										</TouchableOpacity>
 										<TouchableOpacity onPress={() => goToMap(location)}>
-											<Text style={styles.text}>location</Text>
+											<Text style={styles.text}>{locality}</Text>
 										</TouchableOpacity>
 									</View>
 								</View>

@@ -15,6 +15,7 @@ export const PostScreen = ({ navigation }) => {
 	const singOut = () => {
 		dispatch(logOutUser())
 	}
+
 	return (
 		<NestedScreen.Navigator>
 			<NestedScreen.Screen
@@ -34,14 +35,3 @@ export const PostScreen = ({ navigation }) => {
 		</NestedScreen.Navigator>
 	)
 }
-
-const styles = StyleSheet.create({
-	container: {
-		paddingHorizontal: 16,
-		paddingVertical: 32,
-		flex: 1,
-		justifyContent: 'flex-start',
-		alignItems: 'flex-start',
-		backgroundColor: '#fff',
-	},
-})

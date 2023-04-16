@@ -24,6 +24,7 @@ export const DefaultScreenPost = ({ navigation }) => {
 	const [posts, setPosts] = useState(null)
 	const { width } = useWindowDimensions()
 	const { nickname, userId } = useSelector(selectAuth)
+
 	useEffect(() => {
 		getAllPost()
 	}, [])
@@ -50,7 +51,7 @@ export const DefaultScreenPost = ({ navigation }) => {
 			<FlatList
 				data={posts}
 				keyExtractor={(_, index) => index.toString()}
-				renderItem={({ item: { location, comment, photo, id } }) => (
+				renderItem={({ item: { locality, location, comment, photo, id } }) => (
 					<View style={styles.post}>
 						<View style={styles.photoContainer}>
 							<Image
@@ -70,7 +71,7 @@ export const DefaultScreenPost = ({ navigation }) => {
 								<FontAwesome name='comment-o' size={24} color='black' />
 							</TouchableOpacity>
 							<TouchableOpacity onPress={() => goToMap(location)}>
-								<Text style={styles.text}>location</Text>
+								<Text style={styles.text}>{locality}</Text>
 							</TouchableOpacity>
 						</View>
 					</View>

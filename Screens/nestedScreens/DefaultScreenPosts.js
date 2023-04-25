@@ -39,9 +39,11 @@ export const DefaultScreenPost = ({ navigation }) => {
 			console.log(error)
 		}
 	}
+
 	const goToComments = id => {
 		navigation.navigate('Comments', { postId: id })
 	}
+
 	const goToMap = location => {
 		navigation.navigate('Map', location)
 	}
